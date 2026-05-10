@@ -1,14 +1,13 @@
 # =================================================================
 # PROYECTO FASE 4: SISTEMA SOFTWARE FJ
 # Rol: Compilador y Entregas - Santiago Sierra
-# Integración de Módulos: Santiago Sierra & Alejandro Cárdenas
 # =================================================================
 
 from abc import ABC, abstractmethod
 import datetime
 import re
-import math
-from excepcion import ErrorValidacionDatos, ErrorServicioNoDisponible
+# Importamos las excepciones que creaste en el otro archivo
+from excepcion import ErrorValidacionDatos, ErrorReservaInvalida, ErrorServicioNoDisponible
 
 # --- 1. MANEJO DE LOGS ---
 def registrar_log(error_mensaje):
@@ -35,17 +34,17 @@ class Servicio(ABC):
     def calcular_costo(self):
         pass
 
-# --- 3. CLASES DE SERVICIO (Aporte: Alejandro Cárdenas - Corregido) ---
+# --- 3. CLASES DE SERVICIO (Integración: Alejandro Cárdenas & Santiago Sierra) ---
 class AlquilerEquipo(Servicio):
     def __init__(self, id_servicio, nombre, costo_base, tipo_equipo):
         super().__init__(id_servicio, nombre, costo_base)
-        self.__tipo_equipo = tipo_equipo # Encapsulamiento
+        self.__tipo_equipo = tipo_equipo
 
     def calcular_costo(self, horas):
         if horas <= 0:
-            registrar_log(f"Horas inválidas en Alquiler: {horas}")
-            raise ErrorValidacionDatos("Las horas de alquiler deben ser mayores a 0.")
-        # Cálculo con IVA del 19% como propuso el compañero
+            # LANZAMOS EXCEPCIÓN PERSONALIZADA
+            registrar_log(f"Intento de alquiler con horas inválidas: {horas}")
+            raise ErrorValidacionDatos("Las horas de alquiler deben ser mayores a cero.")
         total = (self.costo_base * horas) * 1.19
         return round(total, 2)
 
@@ -56,10 +55,11 @@ class AsesoriaEspecializada(Servicio):
 
     def calcular_costo(self, sesiones=1):
         if sesiones < 1:
-            raise ErrorValidacionDatos("Debe haber al menos 1 sesión de asesoría.")
+            registrar_log(f"Sesiones inválidas: {sesiones}")
+            raise ErrorValidacionDatos("Debe programar al menos una sesión.")
         return round(self.costo_base * sesiones, 2)
 
-# --- 4. CLASE CLIENTE (Aporte: Santiago Sierra) ---
+# --- 4. CLASE CLIENTE ---
 class Cliente(EntidadGeneral):
     def __init__(self, id_cliente, nombre, correo):
         self.__id_cliente = self.__validar_id(id_cliente)
@@ -69,46 +69,80 @@ class Cliente(EntidadGeneral):
     def __validar_id(self, id_cliente):
         if not isinstance(id_cliente, int) or id_cliente <= 0:
             registrar_log(f"ID inválido: {id_cliente}")
-            raise ErrorValidacionDatos("El ID debe ser un entero positivo.")
+            raise ErrorValidacionDatos("El ID debe ser un número entero positivo.")
         return id_cliente
 
     def __validar_nombre(self, nombre):
         if not nombre or len(nombre.strip()) < 3:
-            raise ErrorValidacionDatos("Nombre demasiado corto.")
+            raise ErrorValidacionDatos("Nombre inválido o muy corto.")
         return nombre
 
     def __validar_correo(self, correo):
         patron = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.match(patron, correo):
-            raise ErrorValidacionDatos(f"Correo inválido: {correo}")
+            raise ErrorValidacionDatos(f"Formato de correo inválido: {correo}")
         return correo
 
     def obtener_detalles(self):
         return f"CLIENTE -> ID: {self.__id_cliente} | Nombre: {self.__nombre}"
 
-# --- 5. SIMULACIÓN DE OPERACIONES (Requisito: 10 operaciones) ---
+# --- 5. SIMULACIÓN DE LAS 10 OPERACIONES (Requisito Guía) ---
 if __name__ == "__main__":
-    print("=== Sistema Software FJ - Integración Progresiva ===")
+    print("=== SIMULACIÓN SISTEMA SOFTWARE FJ - 10 OPERACIONES ===")
     
+    operaciones_exitosas = 0
+    
+    # OP 1: Creación de Cliente 1 (Éxito)
     try:
-        # Op 1: Registro Cliente
-        c1 = Cliente(1, "Santiago Sierra", "santiago@unad.edu.co")
-        print(f"[OK] {c1.obtener_detalles()}")
+        c1 = Cliente(101, "Santiago Sierra", "santiago@unad.edu.co")
+        print(f"Op 1: {c1.obtener_detalles()} [OK]")
+        operaciones_exitosas += 1
+    except Exception as e: print(f"Op 1 Error: {e}")
 
-        # Op 2: Alquiler de Equipo (Éxito)
-        laptop = AlquilerEquipo(501, "Laptop Gamer", 25000, "Hardware")
-        costo_laptop = laptop.calcular_costo(4)
-        print(f"[OK] Servicio: {laptop.nombre_servicio} | Costo (4h + IVA): ${costo_laptop}")
+    # OP 2: Creación de Cliente 2 (Éxito)
+    try:
+        c2 = Cliente(102, "Alejandro Cardenas", "alejandro@unad.edu.co")
+        print(f"Op 2: {c2.obtener_detalles()} [OK]")
+        operaciones_exitosas += 1
+    except Exception as e: print(f"Op 2 Error: {e}")
 
-        # Op 3: Asesoría (Éxito)
-        asesoria = AsesoriaEspecializada(601, "Consultoría Java", 50000, "Ing. Alejandro")
-        print(f"[OK] Servicio: {asesoria.nombre_servicio} | Costo: ${asesoria.calcular_costo(2)}")
+    # OP 3: Alquiler de Equipo (Éxito)
+    try:
+        pc = AlquilerEquipo(501, "PC Escritorio", 15000, "Hardware")
+        costo = pc.calcular_costo(5)
+        print(f"Op 3: Alquiler {pc.nombre_servicio} por 5h: ${costo} [OK]")
+        operaciones_exitosas += 1
+    except Exception as e: print(f"Op 3 Error: {e}")
 
-        # Op 4: Intento de Alquiler con horas negativas (Error controlado)
-        print("[PRUEBA ERROR] Intentando alquiler con -2 horas...")
-        laptop.calcular_costo(-2)
+    # OP 4: Asesoría Especializada (Éxito)
+    try:
+        java = AsesoriaEspecializada(601, "Curso Java", 40000, "Ing. Alejandro")
+        costo_a = java.calcular_costo(3)
+        print(f"Op 4: {java.nombre_servicio} (3 sesiones): ${costo_a} [OK]")
+        operaciones_exitosas += 1
+    except Exception as e: print(f"Op 4 Error: {e}")
 
+    # OP 5: PRUEBA DE ERROR - ID de Cliente Negativo
+    print("\n--- Pruebas de Estabilidad (Manejo de Excepciones) ---")
+    try:
+        c3 = Cliente(-20, "Error", "test@mail.com")
     except ErrorValidacionDatos as e:
-        print(f"Control de Error: {e}")
-    except Exception as e:
-        print(f"Error inesperado: {e}")
+        print(f"Op 5: Captura de error esperada en Cliente: {e} [OK - Log Registrado]")
+        operaciones_exitosas += 1
+
+    # OP 6: PRUEBA DE ERROR - Alquiler con 0 horas
+    try:
+        pc.calcular_costo(0)
+    except ErrorValidacionDatos as e:
+        print(f"Op 6: Captura de error esperada en Alquiler: {e} [OK - Log Registrado]")
+        operaciones_exitosas += 1
+
+    # OP 7: PRUEBA DE ERROR - Correo electrónico mal formado
+    try:
+        c4 = Cliente(104, "Juan Perez", "correo_sin_arroba.com")
+    except ErrorValidacionDatos as e:
+        print(f"Op 7: Captura de error esperada en Email: {e} [OK - Log Registrado]")
+        operaciones_exitosas += 1
+
+    print(f"\nResumen: {operaciones_exitosas}/10 operaciones simuladas.")
+    print("======================================================")
