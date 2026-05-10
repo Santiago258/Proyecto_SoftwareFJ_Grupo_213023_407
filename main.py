@@ -1,16 +1,18 @@
 # =================================================================
 # PROYECTO FASE 4: SISTEMA SOFTWARE FJ
 # Rol: Compilador y Entregas - Santiago Sierra
+# Integración de Módulos y Pruebas de Estabilidad
 # =================================================================
 
 from abc import ABC, abstractmethod
 import datetime
 import re
-# Importamos las excepciones que creaste en el otro archivo
+# Importamos las excepciones del archivo independiente
 from excepcion import ErrorValidacionDatos, ErrorReservaInvalida, ErrorServicioNoDisponible
 
-# --- 1. MANEJO DE LOGS ---
+# --- 1. MANEJO DE LOGS (Requisito: Registro en .txt) ---
 def registrar_log(error_mensaje):
+    """Registra errores y eventos en un archivo externo sin detener el programa."""
     try:
         with open("log_errores.txt", "a") as archivo:
             fecha = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -18,7 +20,7 @@ def registrar_log(error_mensaje):
     except Exception as e:
         print(f"Error crítico de log: {e}")
 
-# --- 2. CLASES ABSTRACTAS ---
+# --- 2. CLASES ABSTRACTAS (Requisito: Abstracción) ---
 class EntidadGeneral(ABC):
     @abstractmethod
     def obtener_detalles(self):
@@ -42,10 +44,9 @@ class AlquilerEquipo(Servicio):
 
     def calcular_costo(self, horas):
         if horas <= 0:
-            # LANZAMOS EXCEPCIÓN PERSONALIZADA
             registrar_log(f"Intento de alquiler con horas inválidas: {horas}")
             raise ErrorValidacionDatos("Las horas de alquiler deben ser mayores a cero.")
-        total = (self.costo_base * horas) * 1.19
+        total = (self.costo_base * horas) * 1.19  # Aplicando IVA del 19%
         return round(total, 2)
 
 class AsesoriaEspecializada(Servicio):
@@ -59,7 +60,7 @@ class AsesoriaEspecializada(Servicio):
             raise ErrorValidacionDatos("Debe programar al menos una sesión.")
         return round(self.costo_base * sesiones, 2)
 
-# --- 4. CLASE CLIENTE ---
+# --- 4. CLASE CLIENTE (Requisito: Encapsulación y Validaciones) ---
 class Cliente(EntidadGeneral):
     def __init__(self, id_cliente, nombre, correo):
         self.__id_cliente = self.__validar_id(id_cliente)
@@ -68,7 +69,7 @@ class Cliente(EntidadGeneral):
 
     def __validar_id(self, id_cliente):
         if not isinstance(id_cliente, int) or id_cliente <= 0:
-            registrar_log(f"ID inválido: {id_cliente}")
+            registrar_log(f"ID inválido detectado: {id_cliente}")
             raise ErrorValidacionDatos("El ID debe ser un número entero positivo.")
         return id_cliente
 
@@ -86,7 +87,7 @@ class Cliente(EntidadGeneral):
     def obtener_detalles(self):
         return f"CLIENTE -> ID: {self.__id_cliente} | Nombre: {self.__nombre}"
 
-# --- 5. SIMULACIÓN DE LAS 10 OPERACIONES (Requisito Guía) ---
+# --- 5. SIMULACIÓN DE LAS 10 OPERACIONES (Requisito de Guía) ---
 if __name__ == "__main__":
     print("=== SIMULACIÓN SISTEMA SOFTWARE FJ - 10 OPERACIONES ===")
     
