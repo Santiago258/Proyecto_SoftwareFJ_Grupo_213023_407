@@ -6,13 +6,13 @@ class ErrorSoftwareFJ(Exception):
     pass
 
 class ErrorReservaInvalida(ErrorSoftwareFJ):
-    """Se lanza cuando una reserva no cumple los requisitos (ej. fecha pasada)."""
+    """Se lanza cuando una reserva no cumple los requisitos."""
     pass
 
 class ErrorServicioNoDisponible(ErrorSoftwareFJ):
-    """Se lanza cuando el servicio solicitado (Sala/Equipo) ya está ocupado."""
+    """Se lanza cuando el servicio solicitado ya está ocupado."""
     pass
 
 class ErrorValidacionDatos(ErrorSoftwareFJ):
-    """Se lanza cuando los datos de entrada no cumplen el formato esperado."""
+    """Se lanza cuando los datos de entrada no cumplen el formato."""
     pass
