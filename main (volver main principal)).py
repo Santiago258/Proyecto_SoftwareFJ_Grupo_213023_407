@@ -174,12 +174,17 @@ if __name__ == "__main__":
     # Demuestra encadenamiento de excepciones:
     # raise ReservaInvalidaError(...) from ValueError(...)
     # implementado dentro de reserva_completa.py
+    # NOTA: confirmar_reserva() captura el error internamente y retorna False.
+    # El contador suma cuando el rechazo ocurre correctamente (igual que ops 5,6,7).
     try:
         cliente_9 = Cliente(202, "Carlos Ruiz", "carlos@unad.edu.co")
         equipo_9  = AlquilerEquipo(502, "Laptop Dell", 20000, "Hardware")
         reserva_9 = Reserva(802, cliente_9, equipo_9, 0)  # tiempo=0 → debe fallar
-        reserva_9.confirmar_reserva()
-        operaciones_exitosas += 1
+        resultado_9 = reserva_9.confirmar_reserva()
+        if not resultado_9:
+            # El error fue capturado y manejado correctamente: operación exitosa
+            print(f"Op 9: Error de duración capturado y registrado correctamente [OK - Log Registrado]")
+            operaciones_exitosas += 1
     except Exception as e:
         registrar_log(f"Op 9 - Error no capturado: {e}")
         print(f"Op 9 Error crítico: {e}")
@@ -199,3 +204,4 @@ if __name__ == "__main__":
 
     print(f"\nResumen final: {operaciones_exitosas}/10 operaciones completadas.")
     print("======================================================")
+
