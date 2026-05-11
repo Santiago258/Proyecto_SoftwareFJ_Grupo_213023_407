@@ -1,7 +1,7 @@
 # =================================================================
 # PROYECTO FASE 4: SISTEMA SOFTWARE FJ
 # Archivo: reserva_completa.py
-# Aporte: Clase Reserva corregida + 3 operaciones faltantes
+# Aporte: Deiby Nicolás Carrillo Sánchez Clase Reserva corregida + 3 operaciones faltantes
 #         para completar las 10 requeridas por la guía.
 #
 # CORRECCIONES APLICADAS:
