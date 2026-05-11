@@ -146,7 +146,7 @@ if __name__ == "__main__":
         operaciones_exitosas += 1
 
     # =================================================================
-    # APORTE: [Tu nombre]
+    # APORTE: [Deiby Nicolás Carrillo Sánchez]
     # Integración de la clase Reserva y operaciones 8, 9 y 10.
     # Archivo requerido en el mismo directorio: reserva_completa.py
     # Los imports van aquí (locales al bloque main) para no interferir
@@ -156,7 +156,7 @@ if __name__ == "__main__":
     from Servicio_salas_alejandrocardenas import ReservaSala
 
     print("\n=================================================================")
-    print("APORTE [Tu nombre]: Operaciones 8, 9 y 10 — Clase Reserva")
+    print("APORTE [Deiby Nicolás Carrillo Sánchez]: Operaciones 8, 9 y 10 — Clase Reserva")
     print("=================================================================")
 
     # OP 8: Reserva de sala EXITOSA (demuestra try/except/else/finally)
