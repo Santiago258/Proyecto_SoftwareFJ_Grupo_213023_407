@@ -1,4 +1,6 @@
 # --- REQUERIMIENTO: EXCEPCIONES PERSONALIZADAS ---
+# Definición de errores específicos para Software FJ
+
 class ErrorSoftwareFJ(Exception):
     """Clase base para excepciones del sistema."""
     pass
