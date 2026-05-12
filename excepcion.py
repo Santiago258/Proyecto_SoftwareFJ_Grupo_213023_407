@@ -1,12 +1,14 @@
 # --- REQUERIMIENTO: EXCEPCIONES PERSONALIZADAS ---
-# Definición de errores específicos para Software FJ
-
 class ErrorSoftwareFJ(Exception):
     """Clase base para excepciones del sistema."""
     pass
 
 class ErrorReservaInvalida(ErrorSoftwareFJ):
     """Se lanza cuando una reserva no cumple los requisitos."""
+    pass
+
+class ReservaInvalidaError(ErrorSoftwareFJ):
+    """Se lanza cuando los parámetros de tiempo de una reserva son inválidos."""
     pass
 
 class ErrorServicioNoDisponible(ErrorSoftwareFJ):
